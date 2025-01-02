@@ -1,0 +1,11 @@
+/Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/bin/Debug/net8.0/Turnify.Core.deps.json
+/Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/bin/Debug/net8.0/Turnify.Core.dll
+/Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/bin/Debug/net8.0/Turnify.Core.pdb
+/Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/obj/Debug/net8.0/Turnify.Core.GeneratedMSBuildEditorConfig.editorconfig
+/Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/obj/Debug/net8.0/Turnify.Core.AssemblyInfoInputs.cache
+/Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/obj/Debug/net8.0/Turnify.Core.AssemblyInfo.cs
+/Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/obj/Debug/net8.0/Turnify.Core.csproj.CoreCompileInputs.cache
+/Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/obj/Debug/net8.0/Turnify.Core.dll
+/Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/obj/Debug/net8.0/refint/Turnify.Core.dll
+/Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/obj/Debug/net8.0/Turnify.Core.pdb
+/Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/obj/Debug/net8.0/ref/Turnify.Core.dll

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Turnify.UI</name>
+    </assembly>
+    <members>
+        <member name="M:Turnify.Helpers.LocationHelper.GetCurrentLocationAsync">
+            <summary>
+            Retrieves the current location of the device.
+            </summary>
+            <returns>The current location as a <see cref="T:Microsoft.Maui.Devices.Sensors.Location"/> object.</returns>
+        </member>
+        <member name="M:Turnify.Helpers.LocationHelper.DecodePolyline(System.String)">
+            <summary>
+            Decodes an encoded polyline string into a list of coordinates.
+            </summary>
+            <param name="encodedPolyline">The encoded polyline string.</param>
+            <returns>A list of <see cref="T:Microsoft.Maui.Devices.Sensors.Location"/> objects representing the decoded points.</returns>
+        </member>
+    </members>
+</doc>

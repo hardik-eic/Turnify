@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
+             x:Class="Turnify.UI.Views.HomePage"
+             Title="HomePage">
+
+    <StackLayout Padding="20" Spacing="16">
+           <!-- Pickup Location -->
+        <VerticalStackLayout>
+            <Entry Text="{Binding PickupLocation, Mode=TwoWay}" 
+                   Placeholder="Enter Pickup Location"
+                   TextChanged="OnPickupLocationTextChanged" />
+            <CollectionView ItemsSource="{Binding PickupSuggestions}" 
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedPickupLocation}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Label Text="{Binding}" Padding="5" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+
+         <!-- Dropoff Location -->
+        <VerticalStackLayout>
+            <Entry Text="{Binding DropOffLocation, Mode=TwoWay}" 
+                   Placeholder="Enter Dropoff Location"
+                   TextChanged="OnDropOffLocationTextChanged" />
+            <CollectionView ItemsSource="{Binding DropOffSuggestions}" 
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedDropOffLocation}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Label Text="{Binding}" Padding="5" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+
+        <!-- Show Route Button -->
+        <Button Text="Show Route" Command="{Binding ShowRouteCommand}" />
+
+        <!-- MapView -->
+        <!-- <Map x:Name="MapView" WidthRequest="300" HeightRequest="300" /> -->
+         <maps:Map x:Name="MapView"
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand"
+                      IsShowingUser="True" />
+
+        <!-- Distance & Time Bar -->
+        <Label Text="{Binding RouteInfo.DistanceText}" />
+        <Label Text="{Binding RouteInfo.DurationText}" />
+
+        <!-- Start Navigation Button -->
+        <Button Text="Start Navigate" Command="{Binding NavigateCommand}" />
+    </StackLayout>
+</ContentPage>
+
