@@ -39,7 +39,7 @@ namespace Turnify.UI.ViewModels
             }
         }
 
-        private  string _selectedDropOffLocation = String.Empty;
+        private string _selectedDropOffLocation = String.Empty;
         public string SelectedDropOffLocation
         {
             get => _selectedDropOffLocation;
@@ -100,6 +100,7 @@ namespace Turnify.UI.ViewModels
 
         public string? Distance { get; private set; }
         public string? TimeToReach { get; private set; }
+        public ObservableCollection<Location> RoutePoints { get; private set; }
 
         private async Task GetSuggestionsAsync(string input)
         {
@@ -109,17 +110,34 @@ namespace Turnify.UI.ViewModels
                 Suggestions.Add(suggestion);
         }
 
-        private async Task ShowRouteAsync()
+        public async Task ShowRouteAsync()
         {
-            // Use Google Maps API to calculate route, distance, and time
+            if (string.IsNullOrEmpty(PickupLocation) || string.IsNullOrEmpty(DropOffLocation))
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "Please enter both pickup and drop-off locations.", "OK");
+                return;
+            }
+
+            // Get the route details from Google Places Service
             var route = await _placesService.GetRouteAsync(PickupLocation, DropOffLocation);
+
+            if (route == null || route.RoutePoints == null || !route.RoutePoints.Any())
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "Unable to calculate route. Please try again.", "OK");
+                return;
+            }
+
+            // Update Distance and Duration
             Distance = route.DistanceText;
             TimeToReach = route.DurationText;
-
             OnPropertyChanged(nameof(Distance));
             OnPropertyChanged(nameof(TimeToReach));
 
-            // Show the route on the map (notify view through events or data bindings)
+            // Notify view with route points (optional: trigger event or binding for Map)
+            RoutePoints = new ObservableCollection<Location>(
+                route.RoutePoints.Select(point => new Location(point.Latitude, point.Longitude))
+            );
+            OnPropertyChanged(nameof(RoutePoints));
         }
     }
 }

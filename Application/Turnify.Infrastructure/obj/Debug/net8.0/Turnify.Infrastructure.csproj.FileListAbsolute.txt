@@ -13,3 +13,4 @@
 /Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Application/Turnify.Infrastructure/obj/Debug/net8.0/refint/Turnify.Infrastructure.dll
 /Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Application/Turnify.Infrastructure/obj/Debug/net8.0/Turnify.Infrastructure.pdb
 /Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Application/Turnify.Infrastructure/obj/Debug/net8.0/ref/Turnify.Infrastructure.dll
+/Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Application/Turnify.Infrastructure/obj/Debug/net8.0/Turnify.Infrastructure.sourcelink.json

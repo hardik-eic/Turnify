@@ -96,3 +96,4 @@
 /Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Tests/Core.Tests/obj/Debug/net8.0/Core.Tests.pdb
 /Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Tests/Core.Tests/obj/Debug/net8.0/Core.Tests.genruntimeconfig.cache
 /Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Tests/Core.Tests/obj/Debug/net8.0/ref/Core.Tests.dll
+/Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Tests/Core.Tests/obj/Debug/net8.0/Core.Tests.sourcelink.json

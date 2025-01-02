@@ -2,6 +2,8 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Turnify.UI.Models;
+using Turnify.Helpers;
 
 public class GooglePlacesService : IGooglePlacesService
 {
@@ -26,6 +28,7 @@ public class GooglePlacesService : IGooglePlacesService
 
             var content = await response.Content.ReadAsStringAsync();
             var json = JsonDocument.Parse(content);
+            var headings = new List<string>();
             var suggestions = new List<string>();
 
             foreach (var prediction in json.RootElement.GetProperty("predictions").EnumerateArray())
@@ -45,30 +48,29 @@ public class GooglePlacesService : IGooglePlacesService
 
     public async Task<RouteInfo> GetRouteAsync(string origin, string destination)
     {
-        try
+        var url = $"https://maps.googleapis.com/maps/api/directions/json?origin={origin}&destination={destination}&key={_apiKey}";
+        Console.WriteLine("Final URL", url);
+        var response = await _httpClient.GetAsync(url);
+
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var json = await response.Content.ReadAsStringAsync();
+        // var directions = JsonSerializer.Deserialize<GoogleDirectionsResponse>(json);
+        var directions = GoogleDirectionsResponse.FromJson(json);
+
+        if (directions?.Routes != null && directions.Routes.Any())
         {
-            var url = $"https://maps.googleapis.com/maps/api/directions/json?origin={origin}&destination={destination}&key={_apiKey}";
-            var response = await _httpClient.GetAsync(url);
+            var route = directions.Routes.First();
+            var points = PolylineDecoder.Decoder(route.OverviewPolyline.Points);
 
-            if (!response.IsSuccessStatusCode)
-                return null;
-
-            var content = await response.Content.ReadAsStringAsync();
-            var json = JsonDocument.Parse(content);
-            var routeInfo = new RouteInfo();
-
-            var route = json.RootElement.GetProperty("routes")[0];
-            var leg = route.GetProperty("legs")[0];
-
-            routeInfo.DistanceText = leg.GetProperty("distance").GetProperty("text").GetString();
-            routeInfo.DurationText = leg.GetProperty("duration").GetProperty("text").GetString();
-            routeInfo.PolylinePoints = route.GetProperty("overview_polyline").GetProperty("points").GetString();
-
-            return routeInfo;
-        }
-        catch
-        {
-            // Handle exceptions or logging as needed
+            return new RouteInfo
+            {
+                DistanceText = route.Legs.First().Distance.Text,
+                DurationText = route.Legs.First().Duration.Text,
+                RoutePoints = points
+            };
+        } else {
             return null;
         }
     }
@@ -79,5 +81,6 @@ public class RouteInfo
     public string DistanceText { get; set; }
     public string DurationText { get; set; }
     public string PolylinePoints { get; set; }
+    public List<Microsoft.Maui.Devices.Sensors.Location> RoutePoints { get; set; }
 
 }

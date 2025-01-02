@@ -9,3 +9,4 @@
 /Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/obj/Debug/net8.0/refint/Turnify.Core.dll
 /Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/obj/Debug/net8.0/Turnify.Core.pdb
 /Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/obj/Debug/net8.0/ref/Turnify.Core.dll
+/Users/hardik.ajmeri/Desktop/Projects/MAUI/SourceCodes/Turnify/Core/Turnify.Core/obj/Debug/net8.0/Turnify.Core.sourcelink.json

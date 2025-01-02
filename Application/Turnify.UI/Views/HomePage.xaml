@@ -49,8 +49,8 @@
                       IsShowingUser="True" />
 
         <!-- Distance & Time Bar -->
-        <Label Text="{Binding RouteInfo.DistanceText}" />
-        <Label Text="{Binding RouteInfo.DurationText}" />
+        <Label Text="{Binding Distance}" FontAttributes="Bold" />
+        <Label Text="{Binding TimeToReach}" FontAttributes="Bold" />
 
         <!-- Start Navigation Button -->
         <Button Text="Start Navigate" Command="{Binding NavigateCommand}" />
