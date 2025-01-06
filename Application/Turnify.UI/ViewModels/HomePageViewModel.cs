@@ -60,8 +60,9 @@ namespace Turnify.UI.ViewModels
             _placesService = new GooglePlacesService(apiKey: "AIzaSyAY4IHCAWSUYwNx-igDkMzcfFqaZ2Bofok");
             ShowRouteCommand = new Command(async () => await ShowRouteAsync());
             NavigateCommand = new Command(async () => await NavigateAsync());
+            Distance = "--";
+            TimeToReach = "--";
         }
-
 
         private async Task NavigateAsync()
         {
@@ -88,7 +89,6 @@ namespace Turnify.UI.ViewModels
             }
         }
 
-
         public ObservableCollection<string>? Suggestions { get; }
 
         private Location? _deviceLocation;
@@ -98,8 +98,41 @@ namespace Turnify.UI.ViewModels
             set => SetProperty(ref _deviceLocation, value);
         }
 
-        public string? Distance { get; private set; }
-        public string? TimeToReach { get; private set; }
+        private string _distance;
+        private string _timeToReach;
+        private bool _isDistanceAndTimeAvailable;
+
+        public string Distance
+        {
+            get => _distance;
+            set
+            {
+                SetProperty(ref _distance, value); // Using SetProperty from BaseViewModel
+                UpdateIsDistanceAndTimeAvailable();
+            }
+        }
+
+        public string TimeToReach
+        {
+            get => _timeToReach;
+            set
+            {
+                SetProperty(ref _timeToReach, value); // Using SetProperty from BaseViewModel
+                UpdateIsDistanceAndTimeAvailable();
+            }
+        }
+
+        public bool IsDistanceAndTimeAvailable
+        {
+            get => _isDistanceAndTimeAvailable;
+            set => SetProperty(ref _isDistanceAndTimeAvailable, value); // Using SetProperty from BaseViewModel
+        }
+
+        private void UpdateIsDistanceAndTimeAvailable()
+        {
+            IsDistanceAndTimeAvailable = !string.IsNullOrEmpty(Distance) && !string.IsNullOrEmpty(TimeToReach);
+        }
+
         public ObservableCollection<Location> RoutePoints { get; private set; }
 
         private async Task GetSuggestionsAsync(string input)
@@ -120,7 +153,6 @@ namespace Turnify.UI.ViewModels
 
             // Get the route details from Google Places Service
             var route = await _placesService.GetRouteAsync(PickupLocation, DropOffLocation);
-
             if (route == null || route.RoutePoints == null || !route.RoutePoints.Any())
             {
                 await Application.Current.MainPage.DisplayAlert("Error", "Unable to calculate route. Please try again.", "OK");

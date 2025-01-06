@@ -49,7 +49,6 @@ public class GooglePlacesService : IGooglePlacesService
     public async Task<RouteInfo> GetRouteAsync(string origin, string destination)
     {
         var url = $"https://maps.googleapis.com/maps/api/directions/json?origin={origin}&destination={destination}&key={_apiKey}";
-        Console.WriteLine("Final URL", url);
         var response = await _httpClient.GetAsync(url);
 
         if (!response.IsSuccessStatusCode)
@@ -70,7 +69,9 @@ public class GooglePlacesService : IGooglePlacesService
                 DurationText = route.Legs.First().Duration.Text,
                 RoutePoints = points
             };
-        } else {
+        }
+        else
+        {
             return null;
         }
     }

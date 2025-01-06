@@ -1,6 +1,7 @@
 ﻿using Microsoft.Maui.Maps;
 using Microsoft.Maui.Controls.Maps;
 using Turnify.UI.ViewModels;
+using System.ComponentModel;
 
 namespace Turnify.UI.Views;
 
@@ -13,6 +14,25 @@ public partial class HomePage : ContentPage
         InitializeComponent();
         _viewModel = new HomePageViewModel();
         BindingContext = _viewModel;
+
+        _viewModel.PropertyChanged += ViewModel_RoutePointsChanged;
+    }
+
+    private void ViewModel_RoutePointsChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(HomePageViewModel.RoutePoints))
+        {
+            UpdateMap();
+        }
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        var geolocationRequest = new GeolocationRequest(GeolocationAccuracy.High, TimeSpan.FromSeconds(10));
+        var location = await Geolocation.GetLocationAsync(geolocationRequest);
+
+        MapView.MoveToRegion(MapSpan.FromCenterAndRadius(location, Distance.FromKilometers(2)));
     }
 
     private async void OnPickupLocationTextChanged(object sender, TextChangedEventArgs e)
@@ -39,77 +59,62 @@ public partial class HomePage : ContentPage
         }
     }
 
-    // Event handler for when the user clicks the "Show Route" button
-    private async void OnShowRouteClicked(object sender, EventArgs e)
+    private void UpdateMap()
     {
-        var viewModel = BindingContext as HomePageViewModel;
-        if (viewModel == null)
-            return;
-
-        await viewModel.ShowRouteAsync();
-
-        if (viewModel.RoutePoints != null && viewModel.RoutePoints.Any())
+        if (_viewModel.RoutePoints != null && _viewModel.RoutePoints.Any())
         {
-            try
+            // Clear existing map elements & pins
+            MapView.MapElements.Clear();
+            MapView.Pins.Clear();
+
+            // Add polyline for the route
+            var polyline = new Polyline
             {
-                // Clear existing map elements and pins
-                MapView.MapElements.Clear();
-                MapView.Pins.Clear();
+                StrokeColor = Colors.Blue,
+                StrokeWidth = 15
+            };
 
-                // Add a pin for the pickup location
-                var pickupLocation = viewModel.RoutePoints.First();
-                var pickupPin = new Pin
-                {
-                    Label = "Pickup Location",
-                    Address = viewModel.PickupLocation,
-                    Location = pickupLocation,
-                    Type = PinType.Place
-                };
-                MapView.Pins.Add(pickupPin);
-
-                // Add a pin for the drop-off location
-                var dropOffLocation = viewModel.RoutePoints.Last();
-                var dropOffPin = new Pin
-                {
-                    Label = "Drop-off Location",
-                    Address = viewModel.DropOffLocation,
-                    Location = dropOffLocation,
-                    Type = PinType.Place
-                };
-                MapView.Pins.Add(dropOffPin);
-
-                // Create and add polyline
-                var polyline = new Polyline
-                {
-                    StrokeColor = Colors.Blue,
-                    StrokeWidth = 5
-                };
-
-                foreach (var point in viewModel.RoutePoints)
-                {
-                    polyline.Geopath.Add(point);
-                }
-
-                MapView.MapElements.Add(polyline);
-
-                // Adjust map to show the route
-                var mapSpan = MapSpan.FromCenterAndRadius(
-                    new Location(
-                        (pickupLocation.Latitude + dropOffLocation.Latitude) / 2,
-                        (pickupLocation.Longitude + dropOffLocation.Longitude) / 2),
-                    Distance.FromKilometers(5)
-                );
-
-                MapView.MoveToRegion(mapSpan);
-            }
-            catch (Exception ex)
+            foreach (var point in _viewModel.RoutePoints)
             {
-                await DisplayAlert("Error", $"Unable to display the route: {ex.Message}", "OK");
+                polyline.Geopath.Add(point);
             }
+
+            MapView.MapElements.Add(polyline);
+
+            // Add pins for pickup and drop-off locations
+            var pickupPin = new Pin
+            {
+                Label = "Pickup Location",
+                Location = _viewModel.RoutePoints.First(),
+                Type = PinType.Place
+            };
+
+            var dropOffPin = new Pin
+            {
+                Label = "Drop-Off Location",
+                Location = _viewModel.RoutePoints.Last(),
+                Type = PinType.Place
+            };
+
+            MapView.Pins.Add(pickupPin);
+            MapView.Pins.Add(dropOffPin);
+
+            // Adjust map to show the entire route
+            var firstPoint = _viewModel.RoutePoints.First();
+            var lastPoint = _viewModel.RoutePoints.Last();
+
+            var mapSpan = MapSpan.FromCenterAndRadius(
+                new Location(
+                    (firstPoint.Latitude + lastPoint.Latitude) / 2,
+                    (firstPoint.Longitude + lastPoint.Longitude) / 2),
+                Distance.FromKilometers(5)
+            );
+
+            MapView.MoveToRegion(mapSpan);
         }
         else
         {
-            await DisplayAlert("Error", "Unable to display the route. No points found.", "OK");
+            DisplayAlert("Error", "Unable to display the route.", "OK");
         }
     }
 

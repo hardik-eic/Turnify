@@ -151,7 +151,7 @@ namespace Turnify.UI.Models
         public string Points { get; set; }
     }
 
-    public enum Maneuver { KeepRight, TurnLeft, TurnRight };
+    public enum Maneuver { KeepRight, TurnLeft, TurnRight, Unknown };
 
     public enum TravelMode { Driving };
 
@@ -187,33 +187,32 @@ namespace Turnify.UI.Models
         public override Maneuver Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var value = reader.GetString();
-            switch (value)
+            Console.WriteLine("Maneuver Direction: " + value);
+            return value switch
             {
-                case "keep-right":
-                    return Maneuver.KeepRight;
-                case "turn-left":
-                    return Maneuver.TurnLeft;
-                case "turn-right":
-                    return Maneuver.TurnRight;
-            }
-            throw new Exception("Cannot unmarshal type Maneuver");
+                "keep-right" => Maneuver.KeepRight,
+                "turn-left" => Maneuver.TurnLeft,
+                "turn-right" => Maneuver.TurnRight,
+                _ => Maneuver.Unknown
+            };
+            // throw new Exception("Cannot unmarshal type Maneuver");
         }
 
         public override void Write(Utf8JsonWriter writer, Maneuver value, JsonSerializerOptions options)
         {
-            switch (value)
+            var stringValue = value switch
             {
-                case Maneuver.KeepRight:
-                    JsonSerializer.Serialize(writer, "keep-right", options);
-                    return;
-                case Maneuver.TurnLeft:
-                    JsonSerializer.Serialize(writer, "turn-left", options);
-                    return;
-                case Maneuver.TurnRight:
-                    JsonSerializer.Serialize(writer, "turn-right", options);
-                    return;
+                Maneuver.KeepRight => "keep-right",
+                Maneuver.TurnLeft => "turn-left",
+                Maneuver.TurnRight => "turn-right",
+                _ => null
+            };
+
+            if (stringValue != null)
+            {
+                writer.WriteStringValue(stringValue);
             }
-            throw new Exception("Cannot marshal type Maneuver");
+            // throw new Exception("Cannot marshal type Maneuver");
         }
 
         public static readonly ManeuverConverter Singleton = new ManeuverConverter();
@@ -245,7 +244,7 @@ namespace Turnify.UI.Models
 
         public static readonly TravelModeConverter Singleton = new TravelModeConverter();
     }
-    
+
     public class DateOnlyConverter : JsonConverter<DateOnly>
     {
         private readonly string serializationFormat;
@@ -253,13 +252,13 @@ namespace Turnify.UI.Models
 
         public DateOnlyConverter(string? serializationFormat)
         {
-                this.serializationFormat = serializationFormat ?? "yyyy-MM-dd";
+            this.serializationFormat = serializationFormat ?? "yyyy-MM-dd";
         }
 
         public override DateOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-                var value = reader.GetString();
-                return DateOnly.Parse(value!);
+            var value = reader.GetString();
+            return DateOnly.Parse(value!);
         }
 
         public override void Write(Utf8JsonWriter writer, DateOnly value, JsonSerializerOptions options)
@@ -274,13 +273,13 @@ namespace Turnify.UI.Models
 
         public TimeOnlyConverter(string? serializationFormat)
         {
-                this.serializationFormat = serializationFormat ?? "HH:mm:ss.fff";
+            this.serializationFormat = serializationFormat ?? "HH:mm:ss.fff";
         }
 
         public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-                var value = reader.GetString();
-                return TimeOnly.Parse(value!);
+            var value = reader.GetString();
+            return TimeOnly.Parse(value!);
         }
 
         public override void Write(Utf8JsonWriter writer, TimeOnly value, JsonSerializerOptions options)
@@ -299,57 +298,57 @@ namespace Turnify.UI.Models
 
         public DateTimeStyles DateTimeStyles
         {
-                get => _dateTimeStyles;
-                set => _dateTimeStyles = value;
+            get => _dateTimeStyles;
+            set => _dateTimeStyles = value;
         }
 
         public string? DateTimeFormat
         {
-                get => _dateTimeFormat ?? string.Empty;
-                set => _dateTimeFormat = (string.IsNullOrEmpty(value)) ? null : value;
+            get => _dateTimeFormat ?? string.Empty;
+            set => _dateTimeFormat = (string.IsNullOrEmpty(value)) ? null : value;
         }
 
         public CultureInfo Culture
         {
-                get => _culture ?? CultureInfo.CurrentCulture;
-                set => _culture = value;
+            get => _culture ?? CultureInfo.CurrentCulture;
+            set => _culture = value;
         }
 
         public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options)
         {
-                string text;
+            string text;
 
 
-                if ((_dateTimeStyles & DateTimeStyles.AdjustToUniversal) == DateTimeStyles.AdjustToUniversal
-                        || (_dateTimeStyles & DateTimeStyles.AssumeUniversal) == DateTimeStyles.AssumeUniversal)
-                {
-                        value = value.ToUniversalTime();
-                }
+            if ((_dateTimeStyles & DateTimeStyles.AdjustToUniversal) == DateTimeStyles.AdjustToUniversal
+                    || (_dateTimeStyles & DateTimeStyles.AssumeUniversal) == DateTimeStyles.AssumeUniversal)
+            {
+                value = value.ToUniversalTime();
+            }
 
-                text = value.ToString(_dateTimeFormat ?? DefaultDateTimeFormat, Culture);
+            text = value.ToString(_dateTimeFormat ?? DefaultDateTimeFormat, Culture);
 
-                writer.WriteStringValue(text);
+            writer.WriteStringValue(text);
         }
 
         public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-                string? dateText = reader.GetString();
+            string? dateText = reader.GetString();
 
-                if (string.IsNullOrEmpty(dateText) == false)
+            if (string.IsNullOrEmpty(dateText) == false)
+            {
+                if (!string.IsNullOrEmpty(_dateTimeFormat))
                 {
-                        if (!string.IsNullOrEmpty(_dateTimeFormat))
-                        {
-                                return DateTimeOffset.ParseExact(dateText, _dateTimeFormat, Culture, _dateTimeStyles);
-                        }
-                        else
-                        {
-                                return DateTimeOffset.Parse(dateText, Culture, _dateTimeStyles);
-                        }
+                    return DateTimeOffset.ParseExact(dateText, _dateTimeFormat, Culture, _dateTimeStyles);
                 }
                 else
                 {
-                        return default(DateTimeOffset);
+                    return DateTimeOffset.Parse(dateText, Culture, _dateTimeStyles);
                 }
+            }
+            else
+            {
+                return default(DateTimeOffset);
+            }
         }
 
 
