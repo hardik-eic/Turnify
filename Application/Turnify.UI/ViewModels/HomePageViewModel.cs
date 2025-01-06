@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Maui.Controls.Maps;
+using Turnify.UI.Views;
 namespace Turnify.UI.ViewModels
 {
     public class HomePageViewModel : BaseViewModel
@@ -16,14 +17,30 @@ namespace Turnify.UI.ViewModels
         public string PickupLocation
         {
             get => _pickupLocation;
-            set => SetProperty(ref _pickupLocation, value);
+            set
+            {
+                if (_pickupLocation != value)
+                {
+                    _pickupLocation = value;
+                    OnPropertyChanged();
+                    CheckButtonState();
+                }
+            }
         }
 
         private string _dropOffLocation = String.Empty;
         public string DropOffLocation
         {
             get => _dropOffLocation;
-            set => SetProperty(ref _dropOffLocation, value);
+            set
+            {
+                if (_dropOffLocation != value)
+                {
+                    _dropOffLocation = value;
+                    OnPropertyChanged();
+                    CheckButtonState();
+                }
+            }
         }
 
         private string _selectedPickupLocation = String.Empty;
@@ -52,11 +69,31 @@ namespace Turnify.UI.ViewModels
             }
         }
 
+        private bool _shouldNavigate = false;
+        public bool ShouldNavigate
+        {
+            get => _shouldNavigate;
+            private set
+            {
+                if (_shouldNavigate != value)
+                {
+                    _shouldNavigate = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private void CheckButtonState()
+        {
+            ShouldNavigate = !string.IsNullOrEmpty(PickupLocation) && !string.IsNullOrEmpty(DropOffLocation);
+        }
+
         public ICommand ShowRouteCommand { get; }
         public ICommand NavigateCommand { get; }
 
-        public HomePageViewModel()
+        public HomePageViewModel(INavigation navigation)
         {
+            _navigation = navigation;
             _placesService = new GooglePlacesService(apiKey: "AIzaSyAY4IHCAWSUYwNx-igDkMzcfFqaZ2Bofok");
             ShowRouteCommand = new Command(async () => await ShowRouteAsync());
             NavigateCommand = new Command(async () => await NavigateAsync());
@@ -64,9 +101,12 @@ namespace Turnify.UI.ViewModels
             TimeToReach = "--";
         }
 
+        private readonly INavigation _navigation;
+
         private async Task NavigateAsync()
         {
-            // throw new NotImplementedException();
+            // await _navigation.PushAsync(new NavigationPage(new RoutingPage()));
+            await _navigation.PushAsync(new RoutingPage());
         }
 
         public async Task GetPickupSuggestionsAsync(string query)

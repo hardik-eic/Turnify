@@ -12,7 +12,7 @@ public partial class HomePage : ContentPage
     public HomePage()
     {
         InitializeComponent();
-        _viewModel = new HomePageViewModel();
+        _viewModel = new HomePageViewModel(Navigation);
         BindingContext = _viewModel;
 
         _viewModel.PropertyChanged += ViewModel_RoutePointsChanged;
@@ -32,7 +32,10 @@ public partial class HomePage : ContentPage
         var geolocationRequest = new GeolocationRequest(GeolocationAccuracy.High, TimeSpan.FromSeconds(10));
         var location = await Geolocation.GetLocationAsync(geolocationRequest);
 
-        MapView.MoveToRegion(MapSpan.FromCenterAndRadius(location, Distance.FromKilometers(2)));
+        if (_viewModel.SelectedPickupLocation == null && _viewModel.PickupLocation == null)
+        {
+            MapView.MoveToRegion(MapSpan.FromCenterAndRadius(location, Distance.FromKilometers(2)));
+        }
     }
 
     private async void OnPickupLocationTextChanged(object sender, TextChangedEventArgs e)
@@ -102,12 +105,13 @@ public partial class HomePage : ContentPage
             // Adjust map to show the entire route
             var firstPoint = _viewModel.RoutePoints.First();
             var lastPoint = _viewModel.RoutePoints.Last();
+            var distanceKm = CalculateDistance(firstPoint, lastPoint);
 
             var mapSpan = MapSpan.FromCenterAndRadius(
                 new Location(
                     (firstPoint.Latitude + lastPoint.Latitude) / 2,
                     (firstPoint.Longitude + lastPoint.Longitude) / 2),
-                Distance.FromKilometers(5)
+                Distance.FromKilometers(distanceKm * 0.8)
             );
 
             MapView.MoveToRegion(mapSpan);
@@ -124,4 +128,34 @@ public partial class HomePage : ContentPage
         // Navigate to the next page (for example, a "NavigationPage" or "RoutePage")
         // await Shell.Current.GoToAsync("RoutePage");
     }
+
+    // Method to calculate distance between two coordinates using Haversine formula
+    public double CalculateDistance(Location start, Location end)
+    {
+        const double EarthRadiusKm = 6371.0; // Radius of the Earth in kilometers
+
+        var lat1 = DegreesToRadians(start.Latitude);
+        var lon1 = DegreesToRadians(start.Longitude);
+        var lat2 = DegreesToRadians(end.Latitude);
+        var lon2 = DegreesToRadians(end.Longitude);
+
+        var dLat = lat2 - lat1;
+        var dLon = lon2 - lon1;
+
+        var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                Math.Cos(lat1) * Math.Cos(lat2) *
+                Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+
+        var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+        var distance = EarthRadiusKm * c; // Resulting distance in kilometers
+
+        return distance;
+    }
+
+    // Helper function to convert degrees to radians
+    private double DegreesToRadians(double degrees)
+    {
+        return degrees * Math.PI / 180;
+    }
+
 }

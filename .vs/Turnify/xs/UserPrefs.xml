@@ -1,24 +1,15 @@
 ﻿<Properties StartupConfiguration="{E65E42AC-707E-4663-8E64-A5BA25A2B3E1}|Default">
-  <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.ItemProperties.Tests.Core.Tests PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.ItemProperties.Application.Turnify.UI PreferredExecutionTarget="net8.0-android" />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Application/Turnify.UI/Views/HomePage.xaml">
-    <Files>
-      <File FileName="Application/Turnify.UI/Views/HomePage.xaml" Line="13" Column="1" />
-    </Files>
+  <MonoDevelop.Ide.Workbench>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Turnify" expanded="True">
             <Node name="Application" expanded="True">
-              <Node name="Turnify.UI" expanded="True">
+              <Node name="Turnify.UI">
                 <Node name="Views" expanded="True">
-                  <Node name="HomePage.xaml" selected="True" />
+                  <Node name="RoutingPage.xaml" selected="True" />
                 </Node>
               </Node>
             </Node>
@@ -27,4 +18,10 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.Application.Turnify.UI PreferredExecutionTarget="net8.0-android" />
 </Properties>
