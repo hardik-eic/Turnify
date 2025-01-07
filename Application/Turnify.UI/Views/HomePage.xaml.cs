@@ -123,13 +123,6 @@ public partial class HomePage : ContentPage
         }
     }
 
-    // Event handler for when the user clicks the "Start Navigate" button
-    private async void OnStartNavigateClicked(object sender, EventArgs e)
-    {
-        // Navigate to the next page (for example, a "NavigationPage" or "RoutePage")
-        // await Shell.Current.GoToAsync("RoutePage");
-    }
-
     private void UpdateUserLocationPin()
     {
         if (_viewModel.SimulatedUserLocation == null)

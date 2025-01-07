@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              x:Class="Turnify.UI.Views.HomePage"
+             xmlns:local="clr-namespace:Turnify.UI.Views"
              Title="Turnify"
              Shell.BackgroundColor="#2B0B98"
              Shell.ForegroundColor="White"
@@ -10,10 +11,11 @@
 
     <ContentPage.Content>
         <Grid Padding="20"
-              RowSpacing="16">
+              RowSpacing="8">
 
             <!-- Define Rows -->
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -69,8 +71,13 @@
                 </CollectionView>
             </Grid>
 
+            <!-- Mode -->
+            <local:SegmentControl Grid.Row="2"
+                                  ItemsSource="{Binding Segments}"
+                                  SelectedIndex="{Binding SelectedSegmentIndex}"/>
+
             <!-- MapView -->
-            <maps:Map Grid.Row="2"
+            <maps:Map Grid.Row="3"
                       x:Name="MapView"
                       VerticalOptions="FillAndExpand"
                       HorizontalOptions="FillAndExpand"
@@ -78,7 +85,7 @@
                       MapType="Street"/>
 
             <!-- Distance & Time Bar -->
-            <Grid Grid.Row="3"
+            <Grid Grid.Row="4"
                   Padding="8"
                   HorizontalOptions="Fill"
                   ColumnSpacing="32"
@@ -122,7 +129,7 @@
             </Grid>
 
             <!-- Show Route Button -->
-            <Grid Grid.Row="4"
+            <Grid Grid.Row="5"
                   ColumnSpacing="16">
 
                 <Grid.ColumnDefinitions>

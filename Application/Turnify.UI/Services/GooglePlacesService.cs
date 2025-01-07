@@ -75,6 +75,31 @@ public class GooglePlacesService : IGooglePlacesService
             return null;
         }
     }
+
+    public async Task<(string DistanceText, string DurationText)> GetDistanceAndTimeAsync(string origin, string destination, string mode)
+    {
+        try
+        {
+            using var httpClient = new HttpClient();
+            var url = $"https://maps.googleapis.com/maps/api/directions/json?origin={Uri.EscapeDataString(origin)}&destination={Uri.EscapeDataString(destination)}&mode={mode}&key={_apiKey}";
+
+            var response = await httpClient.GetStringAsync(url);
+            var jsonDoc = JsonDocument.Parse(response);
+
+            var route = jsonDoc.RootElement.GetProperty("routes")[0];
+            var leg = route.GetProperty("legs")[0];
+
+            var distanceText = leg.GetProperty("distance").GetProperty("text").GetString();
+            var durationText = leg.GetProperty("duration").GetProperty("text").GetString();
+
+            return (distanceText, durationText);
+        }
+        catch (Exception ex)
+        {
+            // Handle errors (e.g., log them)
+            return ("N/A", "N/A");
+        }
+    }
 }
 
 public class RouteInfo

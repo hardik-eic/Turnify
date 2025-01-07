@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Maui.Controls.Maps;
+using Turnify.UI.Models;
 using Turnify.UI.Views;
 namespace Turnify.UI.ViewModels
 {
@@ -16,6 +17,16 @@ namespace Turnify.UI.ViewModels
         public ICommand NavigateCommand { get; }
         private readonly INavigation _navigation;
         private CancellationTokenSource _simulationCancellationTokenSource;
+        public ObservableCollection<Segment> Segments { get; set; }
+
+        public ObservableCollection<string> VehicleModes { get; } = new ObservableCollection<string>
+        {
+            "transit",
+            "driving",
+            "two_wheeler",
+            "bicycling",
+            "walking",
+        };
 
         private string _pickupLocation = String.Empty;
         public string PickupLocation
@@ -141,6 +152,32 @@ namespace Turnify.UI.ViewModels
                 }
             }
         }
+        private int _selectedSegmentIndex;
+        public int SelectedSegmentIndex
+        {
+            get => _selectedSegmentIndex;
+            set
+            {
+                _selectedSegmentIndex = value;
+                SelectedVehicleMode = VehicleModes[_selectedSegmentIndex];
+                OnPropertyChanged(nameof(SelectedVehicleMode));
+                OnPropertyChanged(nameof(SelectedSegmentIndex));
+            }
+        }
+
+
+        private string _selectedVehicleMode;
+        public string SelectedVehicleMode
+        {
+            get => _selectedVehicleMode;
+            set
+            {
+                if (SetProperty(ref _selectedVehicleMode, value))
+                {
+                    UpdateDistanceAndTimeAsync();
+                }
+            }
+        }
 
         public string SimulationButtonText => IsSimulating ? "Stop" : "Start";
 
@@ -189,6 +226,9 @@ namespace Turnify.UI.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", "Please enter both pickup and drop-off locations.", "OK");
                 return;
             }
+
+            // Calculate the route details based on selected vehicle type
+            await UpdateDistanceAndTimeAsync();
 
             // Get the route details from Google Places Service
             var route = await _placesService.GetRouteAsync(PickupLocation, DropOffLocation);
@@ -259,6 +299,18 @@ namespace Turnify.UI.ViewModels
             }
         }
 
+        public async Task UpdateDistanceAndTimeAsync()
+        {
+            if (!string.IsNullOrEmpty(PickupLocation) && !string.IsNullOrEmpty(DropOffLocation))
+            {
+                var result = await _placesService.GetDistanceAndTimeAsync(PickupLocation, DropOffLocation, SelectedVehicleMode);
+                Distance = result.DistanceText;
+                TimeToReach = result.DurationText;
+                OnPropertyChanged(nameof(Distance));
+                OnPropertyChanged(nameof(TimeToReach));
+            }
+        }
+
         public HomePageViewModel(INavigation navigation)
         {
             _navigation = navigation;
@@ -267,6 +319,16 @@ namespace Turnify.UI.ViewModels
             NavigateCommand = new Command(async () => await SimulateUserMovementAsync());
             Distance = "--";
             TimeToReach = "--";
+
+
+            Segments = new ObservableCollection<Segment>
+            {
+                new Segment { Text = "Transit", ImageSource = "navigation.png" },
+                new Segment { Text = "Driving", ImageSource = "drive.png" },
+                new Segment { Text = "Bicycling", ImageSource = "bycycle.png" },
+                new Segment { Text = "Walking", ImageSource = "walk.png" },
+                new Segment { Text = "Cycling", ImageSource = "cycle.png" }
+            };
         }
 
     }
