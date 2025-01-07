@@ -6,8 +6,9 @@ using Microsoft.Maui.Devices.Sensors;
 
 namespace Turnify.Helpers
 {
-    public static class LocationHelper {
-         /// <summary>
+    public static class LocationHelper
+    {
+        /// <summary>
         /// Retrieves the current location of the device.
         /// </summary>
         /// <returns>The current location as a <see cref="Location"/> object.</returns>
@@ -37,7 +38,7 @@ namespace Turnify.Helpers
             return null;
         }
 
-         /// <summary>
+        /// <summary>
         /// Decodes an encoded polyline string into a list of coordinates.
         /// </summary>
         /// <param name="encodedPolyline">The encoded polyline string.</param>
@@ -87,6 +88,35 @@ namespace Turnify.Helpers
             }
 
             return locations;
+        }
+
+        // Method to calculate distance between two coordinates using Haversine formula
+        public static double CalculateDistance(Location start, Location end)
+        {
+            const double EarthRadiusKm = 6371.0; // Radius of the Earth in kilometers
+
+            var lat1 = DegreesToRadians(start.Latitude);
+            var lon1 = DegreesToRadians(start.Longitude);
+            var lat2 = DegreesToRadians(end.Latitude);
+            var lon2 = DegreesToRadians(end.Longitude);
+
+            var dLat = lat2 - lat1;
+            var dLon = lon2 - lon1;
+
+            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                    Math.Cos(lat1) * Math.Cos(lat2) *
+                    Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            var distance = EarthRadiusKm * c; // Resulting distance in kilometers
+
+            return distance;
+        }
+
+        // Helper function to convert degrees to radians
+        private static double DegreesToRadians(double degrees)
+        {
+            return degrees * Math.PI / 180;
         }
 
     }

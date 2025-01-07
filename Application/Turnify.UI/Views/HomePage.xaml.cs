@@ -1,7 +1,8 @@
-﻿using Microsoft.Maui.Maps;
+﻿using System.ComponentModel;
+using Microsoft.Maui.Maps;
 using Microsoft.Maui.Controls.Maps;
+using Turnify.Helpers;
 using Turnify.UI.ViewModels;
-using System.ComponentModel;
 
 namespace Turnify.UI.Views;
 
@@ -14,15 +15,19 @@ public partial class HomePage : ContentPage
         InitializeComponent();
         _viewModel = new HomePageViewModel(Navigation);
         BindingContext = _viewModel;
-
-        _viewModel.PropertyChanged += ViewModel_RoutePointsChanged;
+        _viewModel.PropertyChanged += ViewModel_PropertyChanged;
     }
 
-    private void ViewModel_RoutePointsChanged(object sender, PropertyChangedEventArgs e)
+    private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(HomePageViewModel.RoutePoints))
         {
             UpdateMap();
+        }
+
+        if (e.PropertyName == nameof(HomePageViewModel.SimulatedUserLocation))
+        {
+            UpdateUserLocationPin();
         }
     }
 
@@ -31,11 +36,7 @@ public partial class HomePage : ContentPage
         base.OnAppearing();
         var geolocationRequest = new GeolocationRequest(GeolocationAccuracy.High, TimeSpan.FromSeconds(10));
         var location = await Geolocation.GetLocationAsync(geolocationRequest);
-
-        if (_viewModel.SelectedPickupLocation == null && _viewModel.PickupLocation == null)
-        {
-            MapView.MoveToRegion(MapSpan.FromCenterAndRadius(location, Distance.FromKilometers(2)));
-        }
+        MapView.MoveToRegion(MapSpan.FromCenterAndRadius(location, Distance.FromKilometers(2)));
     }
 
     private async void OnPickupLocationTextChanged(object sender, TextChangedEventArgs e)
@@ -105,7 +106,7 @@ public partial class HomePage : ContentPage
             // Adjust map to show the entire route
             var firstPoint = _viewModel.RoutePoints.First();
             var lastPoint = _viewModel.RoutePoints.Last();
-            var distanceKm = CalculateDistance(firstPoint, lastPoint);
+            var distanceKm = LocationHelper.CalculateDistance(firstPoint, lastPoint);
 
             var mapSpan = MapSpan.FromCenterAndRadius(
                 new Location(
@@ -129,33 +130,32 @@ public partial class HomePage : ContentPage
         // await Shell.Current.GoToAsync("RoutePage");
     }
 
-    // Method to calculate distance between two coordinates using Haversine formula
-    public double CalculateDistance(Location start, Location end)
+    private void UpdateUserLocationPin()
     {
-        const double EarthRadiusKm = 6371.0; // Radius of the Earth in kilometers
+        if (_viewModel.SimulatedUserLocation == null)
+            return;
 
-        var lat1 = DegreesToRadians(start.Latitude);
-        var lon1 = DegreesToRadians(start.Longitude);
-        var lat2 = DegreesToRadians(end.Latitude);
-        var lon2 = DegreesToRadians(end.Longitude);
+        var userLocation = _viewModel.SimulatedUserLocation;
 
-        var dLat = lat2 - lat1;
-        var dLon = lon2 - lon1;
+        // Clear existing user location pin
+        var existingPin = MapView.Pins.FirstOrDefault(p => p.Label == "User Location");
+        if (existingPin != null)
+        {
+            MapView.Pins.Remove(existingPin);
+        }
 
-        var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                Math.Cos(lat1) * Math.Cos(lat2) *
-                Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+        // Add new user location pin
+        var userPin = new Pin
+        {
+            Label = "User Location",
+            Location = userLocation,
+            Type = PinType.Generic
+        };
 
-        var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-        var distance = EarthRadiusKm * c; // Resulting distance in kilometers
+        MapView.Pins.Add(userPin);
 
-        return distance;
-    }
-
-    // Helper function to convert degrees to radians
-    private double DegreesToRadians(double degrees)
-    {
-        return degrees * Math.PI / 180;
+        // Optionally center the map on the user's location
+        MapView.MoveToRegion(MapSpan.FromCenterAndRadius(userLocation, Distance.FromKilometers(1.0)));
     }
 
 }

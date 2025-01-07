@@ -8,10 +8,14 @@ namespace Turnify.UI.ViewModels
     public class HomePageViewModel : BaseViewModel
     {
         private readonly GooglePlacesService _placesService;
-
         public ObservableCollection<string> PickupSuggestions { get; set; } = new ObservableCollection<string>();
         public ObservableCollection<string> DropOffSuggestions { get; set; } = new ObservableCollection<string>();
-
+        public ObservableCollection<string>? Suggestions { get; }
+        public ObservableCollection<Location> RoutePoints { get; private set; }
+        public ICommand ShowRouteCommand { get; }
+        public ICommand NavigateCommand { get; }
+        private readonly INavigation _navigation;
+        private CancellationTokenSource _simulationCancellationTokenSource;
 
         private string _pickupLocation = String.Empty;
         public string PickupLocation
@@ -83,30 +87,71 @@ namespace Turnify.UI.ViewModels
             }
         }
 
+        private string _distance;
+        public string Distance
+        {
+            get => _distance;
+            set
+            {
+                SetProperty(ref _distance, value); // Using SetProperty from BaseViewModel
+                UpdateIsDistanceAndTimeAvailable();
+            }
+        }
+
+        private string _timeToReach;
+        public string TimeToReach
+        {
+            get => _timeToReach;
+            set
+            {
+                SetProperty(ref _timeToReach, value); // Using SetProperty from BaseViewModel
+                UpdateIsDistanceAndTimeAvailable();
+            }
+        }
+
+        private bool _isDistanceAndTimeAvailable;
+        public bool IsDistanceAndTimeAvailable
+        {
+            get => _isDistanceAndTimeAvailable;
+            set => SetProperty(ref _isDistanceAndTimeAvailable, value); // Using SetProperty from BaseViewModel
+        }
+
+        private Location? _deviceLocation;
+        public Location? DeviceLocation
+        {
+            get => _deviceLocation;
+            set => SetProperty(ref _deviceLocation, value);
+        }
+
+        private Location? _simulatedUserLocation;
+        public Location? SimulatedUserLocation
+        {
+            get => _simulatedUserLocation;
+            set => SetProperty(ref _simulatedUserLocation, value);
+        }
+        private bool _isSimulating;
+        public bool IsSimulating
+        {
+            get => _isSimulating;
+            set
+            {
+                if (SetProperty(ref _isSimulating, value))
+                {
+                    OnPropertyChanged(nameof(SimulationButtonText));
+                }
+            }
+        }
+
+        public string SimulationButtonText => IsSimulating ? "Stop" : "Start";
+
         private void CheckButtonState()
         {
             ShouldNavigate = !string.IsNullOrEmpty(PickupLocation) && !string.IsNullOrEmpty(DropOffLocation);
         }
 
-        public ICommand ShowRouteCommand { get; }
-        public ICommand NavigateCommand { get; }
-
-        public HomePageViewModel(INavigation navigation)
+        private void UpdateIsDistanceAndTimeAvailable()
         {
-            _navigation = navigation;
-            _placesService = new GooglePlacesService(apiKey: "AIzaSyAY4IHCAWSUYwNx-igDkMzcfFqaZ2Bofok");
-            ShowRouteCommand = new Command(async () => await ShowRouteAsync());
-            NavigateCommand = new Command(async () => await NavigateAsync());
-            Distance = "--";
-            TimeToReach = "--";
-        }
-
-        private readonly INavigation _navigation;
-
-        private async Task NavigateAsync()
-        {
-            // await _navigation.PushAsync(new NavigationPage(new RoutingPage()));
-            await _navigation.PushAsync(new RoutingPage());
+            IsDistanceAndTimeAvailable = !string.IsNullOrEmpty(Distance) && !string.IsNullOrEmpty(TimeToReach);
         }
 
         public async Task GetPickupSuggestionsAsync(string query)
@@ -128,52 +173,6 @@ namespace Turnify.UI.ViewModels
                 DropOffSuggestions.Add(suggestion);
             }
         }
-
-        public ObservableCollection<string>? Suggestions { get; }
-
-        private Location? _deviceLocation;
-        public Location? DeviceLocation
-        {
-            get => _deviceLocation;
-            set => SetProperty(ref _deviceLocation, value);
-        }
-
-        private string _distance;
-        private string _timeToReach;
-        private bool _isDistanceAndTimeAvailable;
-
-        public string Distance
-        {
-            get => _distance;
-            set
-            {
-                SetProperty(ref _distance, value); // Using SetProperty from BaseViewModel
-                UpdateIsDistanceAndTimeAvailable();
-            }
-        }
-
-        public string TimeToReach
-        {
-            get => _timeToReach;
-            set
-            {
-                SetProperty(ref _timeToReach, value); // Using SetProperty from BaseViewModel
-                UpdateIsDistanceAndTimeAvailable();
-            }
-        }
-
-        public bool IsDistanceAndTimeAvailable
-        {
-            get => _isDistanceAndTimeAvailable;
-            set => SetProperty(ref _isDistanceAndTimeAvailable, value); // Using SetProperty from BaseViewModel
-        }
-
-        private void UpdateIsDistanceAndTimeAvailable()
-        {
-            IsDistanceAndTimeAvailable = !string.IsNullOrEmpty(Distance) && !string.IsNullOrEmpty(TimeToReach);
-        }
-
-        public ObservableCollection<Location> RoutePoints { get; private set; }
 
         private async Task GetSuggestionsAsync(string input)
         {
@@ -211,5 +210,64 @@ namespace Turnify.UI.ViewModels
             );
             OnPropertyChanged(nameof(RoutePoints));
         }
+
+        public async Task SimulateUserMovementAsync()
+        {
+            if (IsSimulating)
+            {
+                // Stop simulation
+                _simulationCancellationTokenSource?.Cancel();
+                IsSimulating = false;
+                return;
+            }
+
+            // Start simulation
+            _simulationCancellationTokenSource = new CancellationTokenSource();
+            IsSimulating = true;
+
+            try
+            {
+                if (RoutePoints == null || RoutePoints.Count == 0)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "No route available to simulate.", "OK");
+                    return;
+                }
+
+                foreach (var point in RoutePoints)
+                {
+                    if (_simulationCancellationTokenSource.Token.IsCancellationRequested)
+                        break;
+
+                    SimulatedUserLocation = point; // Update the user's simulated location
+                    OnPropertyChanged(nameof(SimulatedUserLocation));
+                    await Task.Delay(1000, _simulationCancellationTokenSource.Token); // Wait for 1 second before moving to the next point
+                }
+
+                if (!_simulationCancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Simulation", "User has reached the destination!", "OK");
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // Simulation was canceled
+                IsSimulating = false;
+            }
+            finally
+            {
+                IsSimulating = false;
+            }
+        }
+
+        public HomePageViewModel(INavigation navigation)
+        {
+            _navigation = navigation;
+            _placesService = new GooglePlacesService(apiKey: "AIzaSyAY4IHCAWSUYwNx-igDkMzcfFqaZ2Bofok");
+            ShowRouteCommand = new Command(async () => await ShowRouteAsync());
+            NavigateCommand = new Command(async () => await SimulateUserMovementAsync());
+            Distance = "--";
+            TimeToReach = "--";
+        }
+
     }
 }

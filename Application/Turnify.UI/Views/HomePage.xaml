@@ -142,7 +142,7 @@
                 <!-- Start Navigation Button -->
                 <Button Grid.Row="0"
                         Grid.Column="1"
-                        Text="Start Navigation"
+                        Text="{Binding SimulationButtonText}"
                         Command="{Binding NavigateCommand}"
                         IsEnabled="{Binding ShouldNavigate}"/>
             </Grid>
