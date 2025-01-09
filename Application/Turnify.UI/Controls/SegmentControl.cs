@@ -1,5 +1,5 @@
 ﻿using Turnify.UI.Models;
-namespace Turnify.UI.Views;
+namespace Turnify.UI.Controls;
 
 public class SegmentControl : ContentView
 {

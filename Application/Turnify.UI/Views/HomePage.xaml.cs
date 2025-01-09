@@ -123,6 +123,7 @@ public partial class HomePage : ContentPage
         }
     }
 
+
     private void UpdateUserLocationPin()
     {
         if (_viewModel.SimulatedUserLocation == null)

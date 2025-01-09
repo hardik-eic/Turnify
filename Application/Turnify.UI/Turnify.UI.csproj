@@ -1,83 +1,68 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
-		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
-
-		<!-- Note for MacCatalyst:
-		The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
-		When specifying both architectures, use the plural <RuntimeIdentifiers> instead of the singular <RuntimeIdentifier>.
-		The Mac App Store will NOT accept apps with ONLY maccatalyst-arm64 indicated;
-		either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
-		<!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
-
 		<OutputType>Exe</OutputType>
 		<RootNamespace>Turnify.UI</RootNamespace>
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-
-		<!-- Display name -->
 		<ApplicationTitle>Turnify.UI</ApplicationTitle>
-
-		<!-- App Identifier -->
 		<ApplicationId>com.companyname.turnify.ui</ApplicationId>
-
-		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
-
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
-		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 	</PropertyGroup>
-
 	<ItemGroup>
-		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
-
-		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
-
-		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
 		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
-
-		<!-- Custom Fonts -->
+		<MauiImage Include="Platforms\Android\Resources\drawable\arrival.png" />
+		<MauiImage Include="Platforms\Android\Resources\drawable\location.png" />
+		<MauiImage Include="Platforms\iOS\Resources\Images\arrival.png" />
+		<MauiImage Include="Platforms\iOS\Resources\Images\location.png" />
 		<MauiFont Include="Resources\Fonts\*" />
-
-		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<PackageReference Include="GoogleMapsApi" Version="0.11.0" />
+		<PackageReference Include="GooglePlayServices.Basement" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Maui.Controls.Maps" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Maps" Version="$(MauiVersion)" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\..\Core\Turnify.Core\Turnify.Core.csproj">
-	    <ReferenceSourceTarget></ReferenceSourceTarget>
-	  </ProjectReference>
-	  <ProjectReference Include="..\Turnify.Infrastructure\Turnify.Infrastructure.csproj">
-	    <ReferenceSourceTarget></ReferenceSourceTarget>
-	  </ProjectReference>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Remove="Views\" />
+		<PackageReference Include="Xamarin.GooglePlayServices.Base" Version="118.5.0.3" />
+		<PackageReference Include="Xamarin.GooglePlayServices.Location" Version="121.3.0.3" />
+		<PackageReference Include="Xamarin.GooglePlayServices.Maps" Version="119.0.0.3" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Views\" />
+		<ProjectReference Include="..\..\Core\Turnify.Core\Turnify.Core.csproj">
+			<ReferenceSourceTarget />
+		</ProjectReference>
+		<ProjectReference Include="..\Turnify.Infrastructure\Turnify.Infrastructure.csproj">
+			<ReferenceSourceTarget />
+		</ProjectReference>
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="Views\" />
+		<None Remove="Platforms\Android\Resources\drawable\arrival.png" />
+		<None Remove="Platforms\Android\Resources\drawable\location.png" />
+		<None Remove="Platforms\iOS\Resources\Images\arrival.png" />
+		<None Remove="Platforms\iOS\Resources\Images\location.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Views\" />
+	</ItemGroup>
+	<ItemGroup>
+		<AndroidResource Remove="Platforms\Android\Resources\drawable\arrival.png" />
+		<AndroidResource Remove="Platforms\Android\Resources\drawable\location.png" />
 	</ItemGroup>
 </Project>

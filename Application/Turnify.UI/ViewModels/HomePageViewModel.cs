@@ -165,7 +165,6 @@ namespace Turnify.UI.ViewModels
             }
         }
 
-
         private string _selectedVehicleMode;
         public string SelectedVehicleMode
         {
@@ -177,6 +176,12 @@ namespace Turnify.UI.ViewModels
                     UpdateDistanceAndTimeAsync();
                 }
             }
+        }
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => SetProperty(ref _isLoading, value);
         }
 
         public string SimulationButtonText => IsSimulating ? "Stop" : "Start";
@@ -301,6 +306,7 @@ namespace Turnify.UI.ViewModels
 
         public async Task UpdateDistanceAndTimeAsync()
         {
+            IsLoading = true;
             if (!string.IsNullOrEmpty(PickupLocation) && !string.IsNullOrEmpty(DropOffLocation))
             {
                 var result = await _placesService.GetDistanceAndTimeAsync(PickupLocation, DropOffLocation, SelectedVehicleMode);
@@ -308,6 +314,7 @@ namespace Turnify.UI.ViewModels
                 TimeToReach = result.DurationText;
                 OnPropertyChanged(nameof(Distance));
                 OnPropertyChanged(nameof(TimeToReach));
+                IsLoading = false;
             }
         }
 
