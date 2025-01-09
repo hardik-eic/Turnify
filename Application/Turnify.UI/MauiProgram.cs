@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using Turnify.UI.Controls;
+// using Turnify.Platforms.Android;
+// using Turnify.Platforms.iOS;
 
 namespace Turnify.UI;
 
@@ -10,6 +13,10 @@ public static class MauiProgram
 		builder
 			.UseMauiApp<App>()
 			.UseMauiMaps()
+			.ConfigureMauiHandlers(handlers =>
+			{
+				// handlers.AddHandler(typeof(CustomPin), typeof(CustomPinHandler)); // Register custom pin handler
+			})
 			.ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

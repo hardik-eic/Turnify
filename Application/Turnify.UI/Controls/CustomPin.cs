@@ -1,8 +1,8 @@
-using Microsoft.Maui.Controls.Maps;
-
 namespace Turnify.UI.Controls;
 
-public class CustomPin : Pin
+public class CustomPin
 {
-    public string PinImage { get; set; } // Property to store custom image path
+    public string Label { get; set; }
+    public Location Location { get; set; }
+    public string PinImage { get; set; }
 }

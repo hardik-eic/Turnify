@@ -1,29 +1,23 @@
-﻿<Properties StartupConfiguration="{E65E42AC-707E-4663-8E64-A5BA25A2B3E1}|Default" DotNetCore.WorkloadInstallDontShowAgain="True">
+﻿<Properties StartupConfiguration="{E65E42AC-707E-4663-8E64-A5BA25A2B3E1}|Default">
+  <MonoDevelop.Ide.ItemProperties.Tests.Core.Tests PreferredExecutionTarget="MonoDevelop.Default" />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Tests.Core.Tests PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.Workbench>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="Turnify" expanded="True">
+          <Node name="Turnify">
             <Node name="Application" expanded="True">
-              <Node name="Turnify.UI">
+              <Node name="Turnify.UI" expanded="True">
                 <Node name="Platforms" expanded="True">
-                  <Node name="Android" expanded="True" />
-                  <Node name="iOS" expanded="True">
-                    <Node name="Resources" expanded="True">
-                      <Node name="Images" expanded="True">
-                        <Node name="location.png" selected="True" />
-                      </Node>
-                    </Node>
+                  <Node name="Android" expanded="True">
+                    <Node name="Handlers" expanded="True" />
                   </Node>
                 </Node>
-                <Node name="Views" expanded="True" />
               </Node>
             </Node>
           </Node>
@@ -31,5 +25,4 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.ItemProperties.Application.Turnify.UI PreferredExecutionTarget="net8.0-android" />
 </Properties>

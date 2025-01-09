@@ -24,25 +24,28 @@
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
 		<MauiImage Include="Resources\Images\*" />
 		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
-		<MauiImage Include="Platforms\Android\Resources\drawable\arrival.png" />
-		<MauiImage Include="Platforms\Android\Resources\drawable\location.png" />
-		<MauiImage Include="Platforms\iOS\Resources\Images\arrival.png" />
-		<MauiImage Include="Platforms\iOS\Resources\Images\location.png" />
 		<MauiFont Include="Resources\Fonts\*" />
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+		<MauiImage Include="Platforms\Android\Resources\drawable\location_android.png" />
+		<MauiImage Include="Platforms\Android\Resources\drawable\arrival_android.png" />
+		<MauiImage Include="Platforms\iOS\Resources\Images\location_ios.png" />
+		<MauiImage Include="Platforms\iOS\Resources\Images\arrival_ios.png" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="GoogleMapsApi" Version="0.11.0" />
-		<PackageReference Include="GooglePlayServices.Basement" Version="1.0.0" />
+		<PackageReference Include="GoogleMapsApi" Version="1.3.3" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Maui.Controls.Maps" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Maps" Version="$(MauiVersion)" />
+	</ItemGroup>
+	<!-- <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+		<PackageReference Include="Xamarin.Android.Maps.Utils" Version="0.5.0" />
+		<PackageReference Include="Xamarin.Forms.GoogleMaps" Version="5.0.0" />
 		<PackageReference Include="Xamarin.GooglePlayServices.Base" Version="118.5.0.3" />
 		<PackageReference Include="Xamarin.GooglePlayServices.Location" Version="121.3.0.3" />
 		<PackageReference Include="Xamarin.GooglePlayServices.Maps" Version="119.0.0.3" />
-	</ItemGroup>
+	</ItemGroup> -->
 	<ItemGroup>
 		<ProjectReference Include="..\..\Core\Turnify.Core\Turnify.Core.csproj">
 			<ReferenceSourceTarget />
@@ -53,16 +56,16 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Views\" />
-		<None Remove="Platforms\Android\Resources\drawable\arrival.png" />
-		<None Remove="Platforms\Android\Resources\drawable\location.png" />
-		<None Remove="Platforms\iOS\Resources\Images\arrival.png" />
-		<None Remove="Platforms\iOS\Resources\Images\location.png" />
+		<None Remove="Platforms\Android\Resources\drawable\location_android.png" />
+		<None Remove="Platforms\Android\Resources\drawable\arrival_android.png" />
+		<None Remove="Platforms\iOS\Resources\Images\location_ios.png" />
+		<None Remove="Platforms\iOS\Resources\Images\arrival_ios.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Views\" />
 	</ItemGroup>
 	<ItemGroup>
-		<AndroidResource Remove="Platforms\Android\Resources\drawable\arrival.png" />
-		<AndroidResource Remove="Platforms\Android\Resources\drawable\location.png" />
+		<AndroidResource Remove="Platforms\Android\Resources\drawable\location_android.png" />
+		<AndroidResource Remove="Platforms\Android\Resources\drawable\arrival_android.png" />
 	</ItemGroup>
 </Project>
