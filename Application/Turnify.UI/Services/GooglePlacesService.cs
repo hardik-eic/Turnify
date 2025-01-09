@@ -76,7 +76,7 @@ public class GooglePlacesService : IGooglePlacesService
         }
     }
 
-    public async Task<(string DistanceText, string DurationText)> GetDistanceAndTimeAsync(string origin, string destination, string mode)
+    public async Task<(string DistanceText, string DurationText)> GetDistanceAndTimeAsync(string origin, string destination, string mode = "driving")
     {
         try
         {

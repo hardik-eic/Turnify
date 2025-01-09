@@ -71,9 +71,9 @@
         </Grid>
 
         <!-- Mode -->
-        <local:SegmentControl Grid.Row="2"
+        <!-- <local:SegmentControl Grid.Row="2"
                               ItemsSource="{Binding Segments}"
-                              SelectedIndex="{Binding SelectedSegmentIndex}"/>
+                              SelectedIndex="{Binding SelectedSegmentIndex}"/> -->
 
         <!-- MapView -->
         <maps:Map Grid.Row="3"
